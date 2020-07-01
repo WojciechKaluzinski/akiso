@@ -1,0 +1,9 @@
+#!/bin/bash
+
+curl -o x.jpg https://cdn2.thecatapi.com/images/ea5.jpg
+
+catimg x.jpg
+
+
+
+echo $(curl http://api.icndb.com/jokes/random)

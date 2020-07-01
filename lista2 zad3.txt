@@ -1,0 +1,48 @@
+
+INPUT
+Store X
+INPUT
+Store Y
+
+/ Loop do odejmowania i zliczania
+loop,    Load num
+         Add X
+         Store num
+         
+         load pom
+         add one
+         Store pom
+
+         Load X
+         Subt Y
+         Store X
+
+         Skipcond 000 
+         Jump loop 
+         
+         
+         /Loop zlicza o jeden za dużo - trzeba odjąć (dodać-1)
+         Load pom
+         add rev 
+         Store pom
+         
+         /do wyniku, który jest ujemny, trzeba dodać jeden raz wartość Y
+         Load X
+         add Y
+         Store X
+
+/ Wyświetlanie wyniku
+Load pom
+Output
+
+Load X
+Output
+Halt
+
+
+X, DEC 0
+Y, DEC 0
+num, DEC 0
+one, DEC 1
+pom, DEC 0
+rev, dec -1

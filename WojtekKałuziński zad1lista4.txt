@@ -1,0 +1,81 @@
+#!/bin/bash
+print_with_unit(){
+	echo
+	if [[ $1 -lt 1000 ]]; then
+		echo "$1 B/s"
+	elif [[ $1 -lt 1000000 ]]; then
+		let output=$1/1000
+		echo "$output kB/s"
+	else
+		let output=$1/1000000
+		echo "$output MB/s"
+	fi
+}
+srxb=0
+rxb=0
+stxb=0
+txb=0
+c=1
+starttx=$(awk 'NR>2{print $10}' /proc/net/dev | paste -sd+ | bc )
+startrx=$(awk 'NR>2{print $2}' /proc/net/dev | paste -sd+ | bc )
+lrxb=$startrx
+ltxb=$starttx
+while true
+do
+#transfer danych
+	clear
+	let "rxb = $(awk 'NR>2{print $2}' /proc/net/dev | paste -sd+ | bc ) - lrxb"
+	lrxbs=$(awk 'NR>2{print $2}' /proc/net/dev | paste -sd+ | bc )
+	let "srxb = ($(awk 'NR>2{print $2}' /proc/net/dev | paste -sd+ | bc ) - startrx)/c"
+	echo Download: $(print_with_unit $rxb) Download srednie: $(print_with_unit $srxb)
+	let "txb = $(awk 'NR>2{print $10}' /proc/net/dev | paste -sd+ | bc ) - ltxb"
+	ltxb=$(awk 'NR>2{print $10}' /proc/net/dev | paste -sd+ | bc )
+	let "stxb = ($(awk 'NR>2{print $10}' /proc/net/dev | paste -sd+ | bc ) - starttx)/c"
+	echo Upload: $(print_with_unit $txb) Upload srednie: $(print_with_unit $stxb)
+	let c=$c+1
+
+#czas działania
+echo $(awk '{print int($1/86400)"dni, "int($1%86400/3600)"godzin, "int(($1%3600)/60)"minut, "int($1%60)"sekund"}' /proc/uptime)
+
+#poziom naładowania
+echo $(awk '{print "poziom naładowania: " int(($1/2234000)*100)"%"}' /sys/class/power_supply/BAT0/charge_now)
+
+#średnie obciażenie systemu w ostatniej minucie
+echo $(awk '{print "obciążenie systemu:  " ($1)}' /proc/loadavg)
+
+obc=$(cat /proc/loadavg | head -c 4)
+  dlugosc=$(echo "$obc*100/5" | bc)
+  reszta=$(echo "($obc*100)%5" | bc | head -c 1)
+  if [ $reszta -gt 2 ]; then
+    ((dlugosc++))
+  fi
+  tab_obc[2]=${tab_obc[1]}
+  tab_obc[1]=${tab_obc[0]}
+  tab_obc[0]=$dlugosc
+
+  dlugosc=${tab_obc[0]}
+  echo -e "\n"
+  echo -e "\t\t\tWYKRES OBCIĄŻENIA SYSTEMU\n"
+  for i in {1..80}; do
+    printf '\u2581'
+  done
+  echo -e "\n0.05                         1.5                           3.0"
+
+  for i in $(seq 1 1 $dlugosc); do
+    printf '\u2588'
+  done
+
+  printf '\n\n'
+
+  for i in {1..80}; do
+    printf '\u2594'
+  done
+  printf '\n\n'
+
+  sleep 1
+  clear
+done
+
+	sleep 1
+done
+

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+path="$(pwd)"
+if [ ! -f "$path/zapis.txt" ]; then
+  touch zapis.txt
+fi
+
+while [ true ]; do
+  mv  nowy.txt stary.txt 2>/dev/null
+  lynx -dump "$1" > nowy.txt
+  roznica="$(diff nowy.txt stary.txt)"
+  if [ "$roznica" != '' ] ; then
+    lynx -dump "$1" >> zapis.txt
+    zenity --info --text "Strona uległa zmianie"
+    sleep $2
+  fi
+done

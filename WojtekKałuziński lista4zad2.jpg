@@ -1,0 +1,11 @@
+#!/bin/bash
+cd /proc
+for d in *; do
+  if [ $d -eq $d 2>/dev/null ]; then
+    cd $d
+    sed -n -e 1p -e 6p -e 7p status
+    cd fd
+    echo -e "NOF :   $(ls | wc -l)\n"
+    cd /proc
+  fi
+done

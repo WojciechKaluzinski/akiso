@@ -1,0 +1,57 @@
+﻿Input
+subt one  //wprowadzanie danych
+Store A
+Input
+Add one
+Store B
+//główna pętla
+Pierwsza,	Load A
+subt B
+Skipcond 000
+Halt
+Load B
+Subt one
+Store B
+Subt one
+Skipcond 800
+Jump Koniec
+Load one
+Store y
+//pętla sprawdzająca czy liczba jest pierwsza
+CzyPierwsza, Load y
+Add one
+Store y
+Load B
+Store x
+//pętla z dzieleniem
+Dzielenie,	Load x
+Subt y
+Store x
+Skipcond 000
+Jump Dzielenie
+Load x
+Add y
+//koniec dzielenia zaladowana reszta
+Skipcond 400
+Jump Dalej
+Jump Pierwsza
+Dalej, Load B
+Subt y
+Subt y
+Skipcond 000
+Jump CzyPierwsza
+Load B
+Output          /jeśli B jest pierwsza, to ją wyświetl
+Jump Pierwsza
+Koniec,	Load two
+Output           /jeśli 2 jest w zakresie to trzeba ją dopisać
+Halt
+
+x,DEC 0
+y,DEC 0
+B,DEC 0
+A, DEC 0
+two,DEC 2
+one,DEC 1
+
+
